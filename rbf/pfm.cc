@@ -129,16 +129,26 @@ RC FileHandle::appendPage(const void *data)
     return 0;
 }
 
-
+// get size of file and divided by page size
 unsigned FileHandle::getNumberOfPages()
 {
-    return -1;
+    if(fp == NULL)
+        return -1;
+
+    if(fseek(fp, 0, SEEK_END) != 0)
+        return -1;
+
+    return ftell(fp)/PAGE_SIZE;
+
 }
 
 
 RC FileHandle::collectCounterValues(unsigned &readPageCount, unsigned &writePageCount, unsigned &appendPageCount)
 {
-    return -1;
+    readPageCount = readPageCounter;
+    writePageCount = writePageCounter;
+    appendPageCount = appendPageCounter;
+    return 0;
 }
 
 
