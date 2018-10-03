@@ -50,17 +50,40 @@ FileHandle::FileHandle()
     readPageCounter = 0;
     writePageCounter = 0;
     appendPageCounter = 0;
+    fp = NULL;
 }
 
 
 FileHandle::~FileHandle()
 {
+    delete fp;
 }
 
-
+// check if file is valid&open
+// check if page number is valid
+// check if fseek correct
 RC FileHandle::readPage(PageNum pageNum, void *data)
 {
-    return -1;
+    if(fp == NULL)
+        return -1;
+
+    int num = getNumberOfPages();
+    if(pageNum < 0 || pageNum > num)
+        return -1;
+
+    if(fseek(fp, PAGE_SIZE * pageNum, SEEK_SET) != 0)
+        return -1;
+
+    // clear whatever was in the data
+    memset(data, 0, PAGE_SIZE);
+    if(fread(data, 1, PAGE_SIZE, fp) != PAGE_SIZE)
+        return -1;
+
+    readPageCounter ++;
+
+    cout<<"reading successed"<<endl;
+
+    return 0;
 }
 
 
@@ -85,4 +108,23 @@ unsigned FileHandle::getNumberOfPages()
 RC FileHandle::collectCounterValues(unsigned &readPageCount, unsigned &writePageCount, unsigned &appendPageCount)
 {
     return -1;
+}
+
+
+FILE* FileHandle::getFilePinter()
+{
+    return fp;
+}
+void FileHandle::setFilePOinter(FILE* filePointer)
+{
+    fp = filePointer;
+}
+
+string FileHandle::getFileName()
+{
+    return filename;
+}
+void FileHandle::setFileName(string name)
+{
+    filename = name;
 }

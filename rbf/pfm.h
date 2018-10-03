@@ -8,6 +8,8 @@ typedef char byte;
 #define PAGE_SIZE 4096
 #include <string>
 #include <climits>
+#include <cstring>
+#include <iostream>
 using namespace std;
 
 class FileHandle;
@@ -47,6 +49,17 @@ public:
     RC appendPage(const void *data);                                      // Append a specific page
     unsigned getNumberOfPages();                                          // Get the number of pages in the file
     RC collectCounterValues(unsigned &readPageCount, unsigned &writePageCount, unsigned &appendPageCount);  // Put the current counter values into variables
+
+    // setters and getters for private field
+    FILE* getFilePinter();
+    void setFilePOinter(FILE* filePointer);
+
+    string getFileName();
+    void setFileName(string name);
+
+private:
+    FILE* fp;
+    string filename;
 }; 
 
 #endif
