@@ -67,7 +67,7 @@ RC FileHandle::readPage(PageNum pageNum, void *data)
     if(fp == NULL)
         return -1;
 
-    int num = getNumberOfPages();
+    unsigned num = getNumberOfPages();
     if(pageNum < 0 || pageNum > num)
         return -1;
 
@@ -86,16 +86,47 @@ RC FileHandle::readPage(PageNum pageNum, void *data)
     return 0;
 }
 
-
+// check if file is valid
+// check if pageNUm is vald
+// check if write is successful
 RC FileHandle::writePage(PageNum pageNum, const void *data)
 {
-    return -1;
+    if(fp == NULL)
+        return -1;
+    
+    if(pageNum > getNumberOfPages() || pageNum < 0)
+        return -1;
+
+    if(fseek(fp, PAGE_SIZE*pageNum, SEEK_SET) != 0)
+        return -1;
+
+    if(fwrite(data, 1, PAGE_SIZE, fp) != PAGE_SIZE)
+        return -1;
+
+    writePageCounter ++;
+
+    cout<<"writing successed"<<endl;
+
+    return 0;
 }
 
-
+// adds a new page to the end of file
+// move to the end of file
+// write data to the file
 RC FileHandle::appendPage(const void *data)
 {
-    return -1;
+    if(fp == NULL)
+        return -1;
+
+    if(fseek(fp, 0, SEEK_END) != 0)
+        return -1;
+    
+    if(fwrite(data, 1, PAGE_SIZE, fp) != PAGE_SIZE)
+        return -1;
+
+    appendPageCounter ++;
+
+    return 0;
 }
 
 
