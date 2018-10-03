@@ -25,10 +25,10 @@ PagedFileManager::~PagedFileManager()
 // check if it can be closed properly
 RC PagedFileManager::createFile(const string &fileName)
 {
-    if(!std::filesystem::exists(filename))
+    if(fileExists(fileName) != 0)
         return -1;
 
-    FILE* filePointer = fopen(filename, "wb");
+    FILE* filePointer = fopen(fileName.c_str(), "wb");
     if(filePointer = NULL){
         cout<<"open failed"<<endl;
         return -1;
@@ -40,10 +40,17 @@ RC PagedFileManager::createFile(const string &fileName)
     return 0;
 }
 
-
+// check if the name already exists
+// delete the file
 RC PagedFileManager::destroyFile(const string &fileName)
 {
-    return -1;
+    if(fileExists(fileName) != 0)
+        return -1;
+
+    if(remove(fileName.c_str()) != 0)
+        return -1;
+
+    return 0;
 }
 
 
@@ -55,6 +62,15 @@ RC PagedFileManager::openFile(const string &fileName, FileHandle &fileHandle)
 
 RC PagedFileManager::closeFile(FileHandle &fileHandle)
 {
+    return -1;
+}
+
+// @return: 0 when file exists
+int fileExists(const string &filename)
+{
+    struct stat fileBuffer;
+    if(stat(filename.c_str(), &fileBuffer) == 0)
+        return 0;
     return -1;
 }
 

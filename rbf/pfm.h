@@ -10,7 +10,7 @@ typedef char byte;
 #include <climits>
 #include <cstring>
 #include <iostream>
-#include <filesystem>
+#include <sys/stat.h>
 using namespace std;
 
 class FileHandle;
@@ -24,6 +24,8 @@ public:
     RC destroyFile   (const string &fileName);                            // Destroy a file
     RC openFile      (const string &fileName, FileHandle &fileHandle);    // Open a file
     RC closeFile     (FileHandle &fileHandle);                            // Close a file
+
+    int fileExists  (const string &filename);                            // check if the file with filename exists
 
 protected:
     PagedFileManager();                                                   // Constructor
