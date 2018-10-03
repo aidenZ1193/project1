@@ -20,10 +20,24 @@ PagedFileManager::~PagedFileManager()
 {
 }
 
-
+// check if the file already exists
+// check if it can be opened correctly
+// check if it can be closed properly
 RC PagedFileManager::createFile(const string &fileName)
 {
-    return -1;
+    if(!std::filesystem::exists(filename))
+        return -1;
+
+    FILE* filePointer = fopen(filename, "wb");
+    if(filePointer = NULL){
+        cout<<"open failed"<<endl;
+        return -1;
+    }
+
+    if(fclose(filePointer) != 0)
+        return -1;
+
+    return 0;
 }
 
 

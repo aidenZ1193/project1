@@ -10,6 +10,7 @@ typedef char byte;
 #include <climits>
 #include <cstring>
 #include <iostream>
+#include <filesystem>
 using namespace std;
 
 class FileHandle;
