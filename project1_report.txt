@@ -1,8 +1,8 @@
 1. Basic information
 Student ID : 
-Student Name : 
-OS (bit) :
-gcc version :
+Student Name : Xiao Zhang
+OS (bit) : 64
+gcc version : 5.4
 
 
 2. Internal Record Format
@@ -12,10 +12,27 @@ gcc version :
 
 3. Page Format
 - Show your page format design
+ ________________________________
+| Hidden Page - the actual page 0|
+----------------------------------
+| Real pages start here          |
+----------------------------------
+|  ......                        |
+|________________________________|
+
 
 
 4. Implementation Detail
 - Other implementation details goes here.
+
+In my implementation, I make a hidden page at the beginning of the file. Inside the FileHandle class, it can
+be accessed as page 0. When FH::readPage and FH::writePage are being called from other class, the functions
+will actually read/write pageNum+1, since the file actually has one more hidden page that outer layer doesn't know. 
+And when calling getNumberOfPages(), it will give the actuall number - 1 to hide the hidden page. 
+
+To keep the counter values persist in the file, each and every time they get modified, the first 100 bytes
+will be cleared and new values will be write.
+
 
 
 5. Other (optional)
