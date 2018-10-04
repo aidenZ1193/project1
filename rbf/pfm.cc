@@ -89,7 +89,7 @@ RC PagedFileManager::closeFile(FileHandle &fileHandle)
     fileHandle.setFileName("");
     fileHandle.setFilePOinter(NULL);
 
-    return -1;
+    return 0;
 }
 
 // @return: 0 when file exists
@@ -126,7 +126,7 @@ RC FileHandle::readPage(PageNum pageNum, void *data)
         return -1;
 
     unsigned num = getNumberOfPages();
-    if(pageNum < 0 || pageNum > num)
+    if(pageNum < 0 || pageNum+2 > num)  // -2 because the index of pageNum starts at 0
         return -1;
 
     // pageNum+1 because of the hidden page
@@ -160,7 +160,9 @@ RC FileHandle::writePage(PageNum pageNum, const void *data)
     if(fp == NULL)
         return -1;
     
-    if(pageNum > getNumberOfPages() || pageNum < 0)
+    cout<<pageNum<<"and actual page-2"<<getNumberOfPages()-2<<endl;
+
+    if(pageNum+2 > getNumberOfPages() || pageNum < 0)
         return -1;
 
     // use pageNum+1 because of the existance of hidden page
@@ -223,7 +225,9 @@ unsigned FileHandle::getNumberOfPages()
     if(page == 0)
         return 0;
 
-    return page;
+    cout<<page<<endl;
+
+    return page-1;
 
 }
 
