@@ -44,7 +44,7 @@ RC PagedFileManager::createFile(const string &fileName)
 // delete the file
 RC PagedFileManager::destroyFile(const string &fileName)
 {
-    if(fileExists(fileName) == 0)
+    if(fileExists(fileName) != 0)
         return -1;
 
     if(remove(fileName.c_str()) != 0)
@@ -102,7 +102,8 @@ RC FileHandle::readPage(PageNum pageNum, void *data)
     if(pageNum < 0 || pageNum > num)
         return -1;
 
-    if(fseek(fp, PAGE_SIZE * pageNum, SEEK_SET) != 0)
+    // pageNum+1 because of the hidden page
+    if(fseek(fp, PAGE_SIZE * (pageNum+1), SEEK_SET) != 0)
         return -1;
 
     // clear whatever was in the data
@@ -183,7 +184,12 @@ unsigned FileHandle::getNumberOfPages()
     if(fseek(fp, 0, SEEK_END) != 0)
         return -1;
 
-    return ftell(fp)/PAGE_SIZE;
+    int page = ftell(fp)/PAGE_SIZE;
+
+    if(page == 0)
+        return 0;
+
+    return page;
 
 }
 
