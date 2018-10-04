@@ -53,16 +53,42 @@ RC PagedFileManager::destroyFile(const string &fileName)
     return 0;
 }
 
+// check if fileHandle is valid
 // check if file exists
-// openfile
+// open file
 RC PagedFileManager::openFile(const string &fileName, FileHandle &fileHandle)
 {
-    return -1;
+    if(fileHandle.getFilePinter() != NULL || fileHandle.getFileName() != "")
+        return -1;
+
+    if(fileExists(fileName) != 0)
+        return -1;
+    
+    // check if opens correctly
+    FILE *file = fopen(fileName.c_str(), "rb+w");
+    if(file == NULL)
+        return -1;
+
+    fileHandle.setFileName(fileName);
+    fileHandle.setFilePOinter(file);
+
+    return 0;
+    
 }
 
-
+// check if the handle is connected to a valid file pointer
+// re-intialize the file pointer and file name in the handle
 RC PagedFileManager::closeFile(FileHandle &fileHandle)
 {
+    if(fileHandle.getFilePinter() == NULL)
+        return -1;
+ 
+    if(fclose(fileHandle.getFilePinter()) != 0)
+        return -1;
+
+    fileHandle.setFileName("");
+    fileHandle.setFilePOinter(NULL);
+
     return -1;
 }
 
@@ -82,6 +108,7 @@ FileHandle::FileHandle()
     writePageCounter = 0;
     appendPageCounter = 0;
     fp = NULL;
+    filename = "";
 }
 
 
