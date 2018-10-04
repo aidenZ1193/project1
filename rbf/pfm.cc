@@ -53,7 +53,8 @@ RC PagedFileManager::destroyFile(const string &fileName)
     return 0;
 }
 
-
+// check if file exists
+// openfile
 RC PagedFileManager::openFile(const string &fileName, FileHandle &fileHandle)
 {
     return -1;
@@ -119,21 +120,35 @@ RC FileHandle::readPage(PageNum pageNum, void *data)
 // check if file is valid
 // check if pageNUm is vald
 // check if write is successful
+
+// for hidden page:
+// check if the writeCOunter is 0
+// if yes, then make a page for the counters
 RC FileHandle::writePage(PageNum pageNum, const void *data)
 {
     if(fp == NULL)
         return -1;
+
+    // now for the hidden page:
+    // if file is empty, then make the hidden page first
+    if(writePageCounter == 0){
+        void *hidden = malloc(PAGE_SIZE);
+        memset(hidden, '\0', sizeof(byte)*PAGE_SIZE);
+        fwrite(hidden, 1, PAGE_SIZE, fp);
+    }
     
     if(pageNum > getNumberOfPages() || pageNum < 0)
         return -1;
 
-    if(fseek(fp, PAGE_SIZE*pageNum, SEEK_SET) != 0)
+    // use pageNum+1 because of the existance of hidden page
+    if(fseek(fp, PAGE_SIZE*(pageNum+1), SEEK_SET) != 0)
         return -1;
 
     if(fwrite(data, 1, PAGE_SIZE, fp) != PAGE_SIZE)
         return -1;
 
     writePageCounter ++;
+    writeCounters();
 
     cout<<"writing successed"<<endl;
 
@@ -179,6 +194,29 @@ RC FileHandle::collectCounterValues(unsigned &readPageCount, unsigned &writePage
     writePageCount = writePageCounter;
     appendPageCount = appendPageCounter;
     return 0;
+}
+
+// write counters to the hidden page of file
+RC FileHandle::writeCounters()
+{
+    if(fseek(fp, 0, SEEK_END) != 0)
+        return -1;
+
+    void *hidden = malloc(100);
+    memset(hidden, '\0', 100);
+    string s = "readPageCount "+std::to_string(readPageCounter);
+    s = s + "writePageCount "+std::to_string(writePageCounter);
+    s = s + "appendPageCount "+std::to_string(appendPageCounter);
+    strcpy((char*)hidden, s.c_str());
+
+    // write to file
+    if(fwrite(hidden, 1, 100, fp) != 0)
+        return 0;
+
+    // debug time
+    cout<<hidden<<endl;
+    return 0;
+
 }
 
 

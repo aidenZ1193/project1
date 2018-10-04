@@ -53,6 +53,8 @@ public:
     unsigned getNumberOfPages();                                          // Get the number of pages in the file
     RC collectCounterValues(unsigned &readPageCount, unsigned &writePageCount, unsigned &appendPageCount);  // Put the current counter values into variables
 
+    RC writeCounters();                                                    // write the counters to the hidden page
+
     // setters and getters for private field
     FILE* getFilePinter();
     void setFilePOinter(FILE* filePointer);
