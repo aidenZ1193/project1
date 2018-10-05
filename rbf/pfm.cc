@@ -127,7 +127,7 @@ RC FileHandle::readPage(PageNum pageNum, void *data)
 
     unsigned num = getNumberOfPages();
     if(pageNum < 0 || pageNum+1 > num){  // -2 because the index of pageNum starts at 0
-        cout<<"reading page is "<<pageNum<<" ,total pages = "<<num<<endl;
+        //cout<<"reading page is "<<pageNum<<" ,total pages = "<<num<<endl;
         return -1;
     }
 
@@ -162,7 +162,7 @@ RC FileHandle::writePage(PageNum pageNum, const void *data)
     if(fp == NULL)
         return -1;
     
-    cout<<pageNum<<"and actual page-2 = "<<getNumberOfPages()-2<<endl;
+    //cout<<pageNum<<"and actual page-2 = "<<getNumberOfPages()-2<<endl;
 
     if(pageNum+1 > getNumberOfPages() || pageNum < 0){
         cout<<"index "<<pageNum<<" doesn't exist, returning -1"<<endl;
@@ -196,7 +196,7 @@ RC FileHandle::appendPage(const void *data)
     // if file is empty, then make the hidden page first
     if(appendPageCounter == 0){
         void *hidden = malloc(PAGE_SIZE);
-        memset(hidden, '\0', sizeof(byte)*PAGE_SIZE);
+        memset(hidden, '\0', PAGE_SIZE);
         fwrite(hidden, 1, PAGE_SIZE, fp);
     }
     
@@ -247,7 +247,7 @@ RC FileHandle::collectCounterValues(unsigned &readPageCount, unsigned &writePage
 // write counters to the hidden page of file
 RC FileHandle::writeCounters()
 {
-    if(fseek(fp, 0, SEEK_END) != 0)
+    if(fseek(fp, 0, SEEK_SET) != 0)
         return -1;
 
     void *hidden = malloc(100);
@@ -261,8 +261,6 @@ RC FileHandle::writeCounters()
     if(fwrite(hidden, 1, 100, fp) <= 0)
         return -1;
 
-    // debug time
-    cout<<hidden<<endl;
     return 0;
 
 }
