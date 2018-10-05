@@ -12,18 +12,33 @@ RecordBasedFileManager* RecordBasedFileManager::instance()
 
 RecordBasedFileManager::RecordBasedFileManager()
 {
+    _pf_manager = PagedFileManager::instance();
 }
 
 RecordBasedFileManager::~RecordBasedFileManager()
 {
+    _pf_manager = NULL;
+    //_rbf_manager = NULL;
 }
 
 RC RecordBasedFileManager::createFile(const string &fileName) {
-    return -1;
+
+    // check if file exists already
+    //if(_pf_manager->fileExists(fileName.c_str()) == 0)
+    //    return -1;
+
+    if(_pf_manager->createFile(fileName) != 0)
+        return -1;
+
+    return 0;
 }
 
 RC RecordBasedFileManager::destroyFile(const string &fileName) {
-    return -1;
+
+    if(_pf_manager->destroyFile(fileName) != 0)
+        return -1;
+
+    return 0;
 }
 
 RC RecordBasedFileManager::openFile(const string &fileName, FileHandle &fileHandle) {
