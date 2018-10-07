@@ -72,6 +72,9 @@ class RecordBasedFileManager
 public:
   static RecordBasedFileManager* instance();
 
+  // helper functions
+  RC findSlot(FileHandle &FileHandle, const void *data, RID &rid);                                  // find the valid empty slot in current file; return slot number or -1
+
   RC createFile(const string &fileName);
   
   RC destroyFile(const string &fileName);
@@ -132,6 +135,7 @@ protected:
 
 private:
   static RecordBasedFileManager *_rbf_manager;
+  PagedFileManager *_pf_manager;
 };
 
 #endif
