@@ -20,6 +20,10 @@ gcc version : 5.4
 |[slot n]...[slot 1][slot 0][N][F]|
 |_________________________________|
 
+[slot n]:2*sizeof(int), stores offset and size of data
+N: sizeof(int), stores the number of slots in the page
+F: sizeof(int), stores the offset of free space
+
 
 
 4. Implementation Detail

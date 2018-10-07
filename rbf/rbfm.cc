@@ -87,7 +87,33 @@ RC RecordBasedFileManager::findSlot(FileHandle &FileHandle, const void *data, RI
     int size = getDataSize(data, recordDescriptor);
 
     // go to current page, get free space addr from file dir
-    void *currentPage = 
+    void *currentPage = FileHandle.currentPage;
+    // get the free space offset and n = num of slots
+    int f_offset = *(int*)(currentPage + PAGE_SIZE - sizeof(int));
+    int n = *(int*)(currentPage + PAGE_SIZE - 2*sizeof(int));
+
+    // if the page doesn't have a file dir yet
+    if(f_offset < 0 || f_offset > PAGE_SIZE){
+        f_offset = size;
+        // put free space offset in the end of page
+        memcpy(currentPage+PAGE_SIZE-sizeof(int), &f_offset, sizeof(int));
+        n = 0;
+        memcpy(currentPage+PAGE_SIZE-2*(sizeof(int)), &n, sizeof(int));
+        // write to rid and return
+        rid.pageNum = FileHandle.currentPageNum;
+        rid.slotNum = n;
+    }else{
+        // see if the page has enough free space
+        // get actual free space first
+        int free = getFreeSpace(currentPage);
+        if(free >= size){
+            // update the new f-offset, and see if any slot open
+            f_offset += size;
+            for(int i = 0; i < n; i++){
+
+            }
+        }
+    }
     
 }
 

@@ -72,6 +72,16 @@ RC PagedFileManager::openFile(const string &fileName, FileHandle &fileHandle)
     fileHandle.setFileName(fileName);
     fileHandle.setFilePointer(file);
 
+    if(fileHandle.getNumberOfPages() > 0){
+        // set current page to the end of file
+        fileHandle.currentPageNum = fileHandle.getNumberOfPages();
+        // use data to read page, and be the current page
+        void* data = malloc(PAGE_SIZE);
+        if(fileHandle.readPage(fileHandle.currentPageNum, data) != -1)
+            fileHandle.currentPage = data;
+        free(data);
+    }
+
     return 0;
     
 }
@@ -109,6 +119,8 @@ FileHandle::FileHandle()
     appendPageCounter = 0;
     fp = NULL;
     filename = "";
+    currentPageNum = 0;
+    currentPage = NULL;
 }
 
 
@@ -200,6 +212,7 @@ RC FileHandle::appendPage(const void *data)
         void *hidden = malloc(PAGE_SIZE);
         memset(hidden, '\0', PAGE_SIZE);
         fwrite(hidden, 1, PAGE_SIZE, fp);
+        free(hidden);
     }
     
     // move to the end of file
@@ -261,9 +274,11 @@ RC FileHandle::writeCounters()
     strcpy((char*)hidden, s.c_str());
 
     // write to file
-    if(fwrite(hidden, 1, 100, fp) <= 0)
+    if(fwrite(hidden, 1, 100, fp) <= 0){
+        free(hidden);
         return -1;
-
+    }
+    free(hidden);
     return 0;
 
 }
