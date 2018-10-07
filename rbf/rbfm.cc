@@ -78,13 +78,51 @@ RC RecordBasedFileManager::printRecord(const vector<Attribute> &recordDescriptor
 // 2. get free space size in current page
 // 3. if enough space, write rid and return slot #
 // 4. else, return -1
-RC RecordBasedFileManager::findSlot(FileHandle &FileHandle, const void *data, RID &rid){
+RC RecordBasedFileManager::findSlot(FileHandle &FileHandle, const void *data, RID &rid, const vector<Attribute> &recordDescriptor){
 
     if(data == NULL){
         return -1;
     }
-    int size = getDataSize();
+    // get the actual size that the record needs
+    int size = getDataSize(data, recordDescriptor);
 
-    int freeSize = 0;
-    if
+    // go to current page, get free space addr from file dir
+    void *currentPage = 
+    
+}
+
+// @return: the actual size that the record needs to be inserted in the page
+RC RecordBasedFileManager::getDataSize(const void *data, const vector<Attribute> &recordDescriptor){
+
+    int s = recordDescriptor.size();
+
+    // offset = offset in data when moving the pointer and getting attr length
+    int offset = ceil(s/CHAR_BIT);
+
+    // number of attributes: s
+    int dataSize  = s;
+    // s fields that stores the actul size of attribute data
+    dataSize += s*sizeof(int);
+
+    // go through the type of recordDescriptor to get size of fields in data
+    for(int i = 0; i < s; i++){
+        // int field should have fixed length
+        if(recordDescriptor[i].type == TypeInt){
+            // sizeof(int) integer itself
+            dataSize += sizeof(int);
+            offset += sizeof(int);
+        }else if(recordDescriptor[i].type == TypeReal){
+            dataSize += sizeof(float);
+            offset += sizeof(float);
+        }else if(recordDescriptor[i].type == TypeVarChar){
+            // use offset to get the length of varchar that stores in the data
+            int len = *(int*)(data+offset);
+            dataSize += len;
+            // offset should move behind the int that represents the varchar length, and the varchar itself
+            offset += (sizeof(int) + len);
+        }
+    }
+
+    return -1;
+
 }

@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <climits>
+#include <cmath>
 
 #include "../rbf/pfm.h"
 
@@ -73,8 +74,16 @@ public:
   static RecordBasedFileManager* instance();
 
   // helper functions
-  RC findSlot(FileHandle &FileHandle, const void *data, RID &rid);                                  // find the valid empty slot in current file; return slot number or -1
-
+  RC findSlot(FileHandle &FileHandle, const void *data, RID &rid, const vector<Attribute> &recordDescriptor);       // find the valid empty slot in current file; return slot number or -1
+  // Returns the actual size need to insert the data
+  // Format:
+  // [num of attributes][size of att #1][size of att #2]...[size of att # n][att #1][att #2]...[att #n]
+  // Empty varchar: put -1 in [size of att #k]
+  // NULL attribute: pit 0 in [size of att #k]
+  // Total size:
+  // [size of int]+[n*size of int]+[total size of attributes data]
+  int getDataSize(const void *data, const vector<Attribute> &recordDescriptor);                                     // return the size of data, or -1               
+  
   RC createFile(const string &fileName);
   
   RC destroyFile(const string &fileName);

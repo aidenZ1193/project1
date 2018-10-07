@@ -13,12 +13,12 @@ gcc version : 5.4
 3. Page Format
 - Show your page format design
  ________________________________
-| Hidden Page - the actual page 0|
+| Records                         |
 ----------------------------------
-| Real pages start here          |
+| Records                         |
 ----------------------------------
-|  ......                        |
-|________________________________|
+|[slot n]...[slot 1][slot 0][N][F]|
+|_________________________________|
 
 
 
@@ -33,7 +33,12 @@ And when calling getNumberOfPages(), it will give the actuall number - 1 to hide
 To keep the counter values persist in the file, each and every time they get modified, the first 100 bytes
 will be cleared and new values will be write.
 
-
+Record format (in page):
+  - [num of attributes][size of att #1][size of att #2]...[size of att # n][att #1][att #2]...[att #n]
+  - Empty varchar: put -1 in [size of att #k]
+  - NULL attribute: pit 0 in [size of att #k]
+  - Total size:
+  - [size of int]+[n*size of int]+[total size of attributes data]
 
 5. Other (optional)
 - Freely use this section to tell us about things that are related to the project 1, but not related to the other sections (optional)

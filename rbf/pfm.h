@@ -45,7 +45,8 @@ public:
     unsigned appendPageCounter;
 
     int currentPageNum;                                                   // gets updated when write/append page
-    
+    void *currentPage;                                                    // pointer to the memory that stores the current page
+
     FileHandle();                                                         // Default constructor
     ~FileHandle();                                                        // Destructor
 
