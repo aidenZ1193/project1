@@ -109,8 +109,23 @@ RC RecordBasedFileManager::findSlot(FileHandle &FileHandle, const void *data, RI
         if(free >= size){
             // update the new f-offset, and see if any slot open
             f_offset += size;
-            for(int i = 0; i < n; i++){
-
+            int offset = 0;
+            int i = 0;
+            for(i = 0; i < n; i++){
+                // from dir's end, get offset of the slot
+                memcpy(&offset, currentPage+PAGE_SIZE-(2+i)*sizeof(int), sizeof(int));
+                // -1 means open slot
+                if(offset == -1){
+                    rid.pageNum = FileHandle.currentPageNum;
+                    rid.slotNum = i;
+                    break;
+                }
+            }
+            // if reached the last slot with a valid offset, means no previous open slot
+            if(i == (n-1) && offset != -1){
+                // make a new slot
+                rid.slotNum = i+1;
+                rid.pageNum = FileHandle.currentPageNum;
             }
         }
     }
