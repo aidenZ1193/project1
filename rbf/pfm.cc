@@ -18,6 +18,7 @@ PagedFileManager::PagedFileManager()
 
 PagedFileManager::~PagedFileManager()
 {
+    delete _pf_manager;
 }
 
 // check if the file already exists

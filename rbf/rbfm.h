@@ -83,7 +83,9 @@ public:
   // Total size:
   // [size of int]+[n*size of int]+[total size of attributes data]
   int getDataSize(const void *data, const vector<Attribute> &recordDescriptor);                                     // return the size of data, or -1               
-  
+  // returns the actual free space in currentPage (page_size - file directory)
+  int getFreeSpace(FileHandle &FileHandle);
+
   RC createFile(const string &fileName);
   
   RC destroyFile(const string &fileName);
